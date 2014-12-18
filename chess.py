@@ -36,3 +36,19 @@ class Position:
         row, col = other
         return (self.row - row, self.col - col)
 
+
+class Piece:
+
+    def __init__(self, color, position, board):
+        self.color = color
+        self.position = position
+        self.board = board
+
+    @property
+    def row(self):
+        return self.position.row
+
+    @property
+    def col(self):
+        return self.position.col
+
