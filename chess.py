@@ -52,3 +52,26 @@ class Piece:
     def col(self):
         return self.position.col
 
+
+class Pawn(Piece):
+
+    def _can_en_passant(self):
+        return (self.color, self.row) in [(Color.white, 1), (Color.black, 7)]
+
+    def valid_move(self, new_position):
+        drow, dcol = new_position - self.position
+
+        # en passant movement
+        if (drow, dcol) == (0, 2) and self._can_en_passant():
+            return board.empty(self.position + (0, 1)) and board.empty(self.position + (0, 2))
+        # normal movement
+        elif (drow, dcol) == (0, 1):
+            return not board[self.row][self.col + 1]
+
+    def valid_attack(self, position):
+        drow, dcol = position - self.position
+
+        # if the movement is right
+        if (drow, dcol) in [(1, 1), (-1, 1)]:
+            return not board.empty(position) and self.color != board.at(position).color
+
