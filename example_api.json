@@ -1,0 +1,21 @@
+
+request type: GET
+api url: /board
+
+json:
+# note that board[0][0] corresponds to A1, board[0][1] corresponds to B1, and so on
+{
+    "turn": 2,
+    "current_player": "white",
+    "board": [["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],
+              ["WP", "WP", "WP", "WP",   "", "WP", "WP", "WP"], 
+              [  "",   "",   "",   "",   "",   "",   "",   ""],
+              [  "",   "",   "",   "", "WP",   "",   "",   ""],
+              [  "",   "",   "",   "", "BP",   "",   "",   ""],
+              [  "",   "",   "",   "",   "",   "",   "",   ""],
+              ["BP", "BP", "BP", "BP",   "", "BP", "BP", "BP"], 
+              ["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"]]
+}
+
+
+
