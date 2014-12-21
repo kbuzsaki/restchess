@@ -29,3 +29,27 @@ json:
  ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"]]
 
 
+request type: GET
+api url: /history
+explanation: gets a history of the moves in this game
+
+json:
+{
+    "moves": [
+            {
+                "timestamp": "2014-12-20T14:51:22+00:00",
+                "player": "white",
+                "piece": "pawn",
+                "start": "E2",
+                "end": "E4"
+            },
+            {
+                "timestamp": "2014-12-20T14:51:37+00:00",
+                "player": "black",
+                "piece": "pawn",
+                "start": "E7",
+                "end": "E5"
+            }
+        ]
+}
+
