@@ -18,11 +18,24 @@ class Position:
         self.row = row
         self.col = col
 
+    @classmethod
+    def from_notation(constructor, notation):
+        col_name, row_name = notation
+        row = ROWS.index(row_name)
+        col = COLS.index(col_name)
+        return constructor(row, col)
+
     def __str__(self):
         return COLS[self.col] + ROWS[self.row]
 
     def __repr__(self):
         return "chess.Position(row=" + str(self.row) + ", col=" + str(self.col) + ")"
+
+    def __eq__(self, other):
+        return self.row == other.row and self.col == other.col
+
+    def __hash__(self):
+        return hash(self.row) ^ hash(self.col)
 
     def __iter__(self):
         yield self.row
