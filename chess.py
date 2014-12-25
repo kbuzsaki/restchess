@@ -50,6 +50,36 @@ class Position:
         return (self.row - row, self.col - col)
 
 
+class Board:
+
+    def __init__(self):
+        self.rows = [[None] * 8 for x in range(8)]
+
+    def __getitem__(self, row):
+        return self.rows[row]
+
+    def __contains__(self, position):
+        row, col = position
+        return 0 <= row < 8 and 0 <= col < 8
+
+    def __iter__(self):
+        """iterates over all of the quares in the board """
+        for row in self.rows:
+            yield from row
+
+    def add(self, color, piece_type, position):
+        piece = piece_type(color, position, self)
+        self.rows[position.row][position.col] = piece
+        return piece
+
+    def at(self, position):
+        row, col = position
+        return self.rows[row][col]
+
+    def empty(self, position):
+        return self.at(position) is None
+
+
 class Piece:
 
     def __init__(self, color, position, board):
