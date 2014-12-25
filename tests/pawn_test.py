@@ -3,7 +3,7 @@ import chess
 import itertools
 from chess import Color, Position, Board, Piece, Pawn
 
-class PieceTest(unittest.TestCase):
+class PawnTest(unittest.TestCase):
 
     def setUp(self):
         self.board = Board()
