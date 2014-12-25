@@ -2,18 +2,31 @@ from flask import Flask
 import json
 from chess import *
 
-app = Flask(__name__)
+class Game:
 
-turn = 2
-cur_player = Color.white
-board = Board.from_notation([[  "",   "",   "",   "",   "",   "",   "",   ""],
-                             ["WP", "WP", "WP", "WP",   "", "WP", "WP", "WP"], 
-                             [  "",   "",   "",   "",   "",   "",   "",   ""],
-                             [  "",   "",   "",   "", "WP",   "",   "",   ""],
-                             [  "",   "",   "",   "", "BP",   "",   "",   ""],
-                             [  "",   "",   "",   "",   "",   "",   "",   ""],
-                             ["BP", "BP", "BP", "BP",   "", "BP", "BP", "BP"], 
-                             [  "",   "",   "",   "",   "",   "",   "",   ""]])
+    def __init__(self):
+        self.turn = 1
+        self.cur_player = Color.white
+
+    def next_turn(self):
+        if self.cur_player == Color.white:
+            self.cur_player = Color.black
+        else:
+            self.turn += 1
+            self.cur_player = Color.white
+
+
+game = Game()
+game.board = Board.from_notation([[  "",   "",   "",   "",   "",   "",   "",   ""],
+                                  ["WP", "WP", "WP", "WP",   "", "WP", "WP", "WP"], 
+                                  [  "",   "",   "",   "",   "",   "",   "",   ""],
+                                  [  "",   "",   "",   "", "WP",   "",   "",   ""],
+                                  [  "",   "",   "",   "", "BP",   "",   "",   ""],
+                                  [  "",   "",   "",   "",   "",   "",   "",   ""],
+                                  ["BP", "BP", "BP", "BP",   "", "BP", "BP", "BP"], 
+                                  [  "",   "",   "",   "",   "",   "",   "",   ""]])
+
+app = Flask(__name__)
 
 @app.route('/')
 def index():
@@ -21,9 +34,13 @@ def index():
 
 @app.route('/board')
 def display_board():
-    display = {"turn": turn, "current_player": str(cur_player), "board": board.to_notation()}
+    display = {"turn": game.turn, "current_player": str(game.cur_player), "board": game.board.to_notation()}
     return json.dumps(display)
     
+@app.route('/move')
+def next_move():
+    game.next_turn()
+    return json.dumps({"turn": game.turn, "current_player": str(game.cur_player)})
 
 if __name__ == "__main__":
     app.run(debug=True)
