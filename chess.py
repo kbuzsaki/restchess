@@ -8,6 +8,16 @@ class Color(Enum):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def from_notation(constructor, notation):
+        if notation.lower() == "w":
+            return Color.white
+        elif notation.lower() == "b":
+            return Color.black
+        else:
+            raise Exception("Couldn't find color for notation: \"" + notation + "\"")
+
+
 
 ROWS = ["1", "2", "3", "4", "5", "6", "7", "8"]
 COLS = ["A", "B", "C", "D", "E", "F", "G", "H"]
@@ -55,6 +65,18 @@ class Board:
     def __init__(self):
         self.rows = [[None] * 8 for x in range(8)]
 
+    @classmethod
+    def from_notation(constructor, board_notation):
+        board = constructor()
+        for row, board_row in enumerate(board_notation):
+            for col, square in enumerate(board_row):
+                if square != "":
+                    color_notation, piece_notation = square
+                    color = Color.from_notation(color_notation)
+                    piece_type = Piece.from_notation(piece_notation)
+                    board.add(color, piece_type, Position(row, col))
+        return board
+
     def __getitem__(self, row):
         return self.rows[row]
 
@@ -86,6 +108,13 @@ class Piece:
         self.color = color
         self.position = position
         self.board = board
+
+    @classmethod
+    def from_notation(constructor, piece_notation):
+        if piece_notation.lower() == "p":
+            return Pawn
+        else:
+            raise Exception("unrecognized piece type: \"" + piece_notation + "\"")
 
     @property
     def row(self):
