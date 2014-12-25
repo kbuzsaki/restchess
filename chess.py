@@ -65,26 +65,55 @@ class Piece:
     def col(self):
         return self.position.col
 
+    def _enemy_at(self, position):
+        return not self.board.empty(position) and self.color != self.board.at(position).color
 
+    def _stop_filter(self, positions):
+        for position in positions:
+            if position in self.board and self.board.empty(position):
+                yield position
+            else:
+                return
+
+    def _enemy_filter(self, positions):
+        return [position for position in positions if self._enemy_at(position)] 
+
+                          
 class Pawn(Piece):
 
-    def _can_en_passant(self):
-        return (self.color, self.row) in [(Color.white, 1), (Color.black, 7)]
+    # offsets from this pawn's position for its normal moves, double moves, and attacks
+    MOVE_OFFSETS = {Color.white: [(1, 0)], Color.black: [(-1, 0)]}
+    DOUBLE_MOVE_OFFSETS = {Color.white: [(1, 0), (2, 0)], Color.black: [(-1, 0), (-2, 0)]}
+    ATTACK_OFFSETS = {Color.white: [(1, 1), (1, -1)], Color.black: [(-1, 1), (-1, -1)]}
 
-    def valid_move(self, new_position):
-        drow, dcol = new_position - self.position
+    def __str__(self):
+        return str(self.color).capitalize() + " Pawn, " + str(self.position)
 
-        # en passant movement
-        if (drow, dcol) == (0, 2) and self._can_en_passant():
-            return board.empty(self.position + (0, 1)) and board.empty(self.position + (0, 2))
-        # normal movement
-        elif (drow, dcol) == (0, 1):
-            return not board[self.row][self.col + 1]
+    def __repr__(self):
+        return "chess.Pawn(color=" + repr(self.color) + ", position=" + repr(self.position) + ")"
+
+    def _can_double_move(self):
+        return (self.color, self.row) in [(Color.white, 1), (Color.black, 6)]
+
+    @property
+    def possible_moves(self):
+        if self._can_double_move():
+            moves = [self.position + offset for offset in Pawn.DOUBLE_MOVE_OFFSETS[self.color]]
+        else:
+            moves = [self.position + offset for offset in Pawn.MOVE_OFFSETS[self.color]]
+        return list(self._stop_filter(moves))
+
+    # TODO: support en passant
+    @property
+    def possible_attacks(self):
+        attacks = [self.position + offset for offset in Pawn.ATTACK_OFFSETS[self.color]]
+        return list(self._enemy_filter(attacks))
+
+    def valid_move(self, position):
+        return position in self.possible_moves
 
     def valid_attack(self, position):
-        drow, dcol = position - self.position
+        return position in self.possible_attacks
 
-        # if the movement is right
-        if (drow, dcol) in [(1, 1), (-1, 1)]:
-            return not board.empty(position) and self.color != board.at(position).color
+
 
