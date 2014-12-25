@@ -133,6 +133,12 @@ class Piece:
     def col(self):
         return self.position.col
 
+    def valid_move(self, position):
+        return position in self.possible_moves
+
+    def valid_attack(self, position):
+        return position in self.possible_attacks
+
     def _enemy_at(self, position):
         return not self.board.empty(position) and self.color != self.board.at(position).color
 
@@ -180,11 +186,7 @@ class Pawn(Piece):
         attacks = [self.position + offset for offset in Pawn.ATTACK_OFFSETS[self.color]]
         return list(self._enemy_filter(attacks))
 
-    def valid_move(self, position):
-        return position in self.possible_moves
 
-    def valid_attack(self, position):
-        return position in self.possible_attacks
 
 
 
