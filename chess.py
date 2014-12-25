@@ -17,6 +17,12 @@ class Color(Enum):
         else:
             raise Exception("Couldn't find color for notation: \"" + notation + "\"")
 
+    def to_notation(self):
+        if self is Color.white:
+            return "w"
+        else:
+            return "b"
+
 
 
 ROWS = ["1", "2", "3", "4", "5", "6", "7", "8"]
@@ -76,6 +82,9 @@ class Board:
                     piece_type = Piece.from_notation(piece_notation)
                     board.add(color, piece_type, Position(row, col))
         return board
+
+    def to_notation(self):
+        return [[piece.to_notation() if piece else "" for piece in row] for row in self.rows]
 
     def __getitem__(self, row):
         return self.rows[row]
@@ -144,6 +153,9 @@ class Pawn(Piece):
     MOVE_OFFSETS = {Color.white: [(1, 0)], Color.black: [(-1, 0)]}
     DOUBLE_MOVE_OFFSETS = {Color.white: [(1, 0), (2, 0)], Color.black: [(-1, 0), (-2, 0)]}
     ATTACK_OFFSETS = {Color.white: [(1, 1), (1, -1)], Color.black: [(-1, 1), (-1, -1)]}
+
+    def to_notation(self):
+        return self.color.to_notation() + "p"
 
     def __str__(self):
         return str(self.color).capitalize() + " Pawn, " + str(self.position)
