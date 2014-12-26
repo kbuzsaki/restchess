@@ -150,11 +150,21 @@ class Piece:
         self.board = board
 
     @classmethod
-    def from_notation(constructor, piece_notation):
-        if piece_notation.upper() == "P":
-            return Pawn
-        else:
-            raise Exception("unrecognized piece type: \"" + piece_notation + "\"")
+    def from_notation(constructor, piece_notation, *, TYPES_BY_NOTATION=None):
+        # need to be lazy here to resolve circularity between Piece and other piece classes
+        if not TYPES_BY_NOTATION:
+            PIECE_TYPES = [Pawn]
+            TYPES_BY_NOTATION = {piece_type.NOTATION: piece_type for piece_type in PIECE_TYPES}
+        return TYPES_BY_NOTATION[piece_notation.upper()]
+
+    def __str__(self):
+        return str(self.color).capitalize() + " " + self.NAME + ", " + str(self.position)
+
+    def __repr__(self):
+        return ("chess." + self.NAME + "(color=" + repr(self.color) + ", position=" + repr(self.position) + ")")
+
+    def to_notation(self):
+        return self.color.to_notation() + self.NOTATION
 
     @property
     def row(self):
@@ -186,19 +196,13 @@ class Piece:
                           
 class Pawn(Piece):
 
+    NAME = "Pawn"
+    NOTATION = "P"
+
     # offsets from this pawn's position for its normal moves, double moves, and attacks
     MOVE_OFFSETS = {Color.white: [(1, 0)], Color.black: [(-1, 0)]}
     DOUBLE_MOVE_OFFSETS = {Color.white: [(1, 0), (2, 0)], Color.black: [(-1, 0), (-2, 0)]}
     ATTACK_OFFSETS = {Color.white: [(1, 1), (1, -1)], Color.black: [(-1, 1), (-1, -1)]}
-
-    def to_notation(self):
-        return self.color.to_notation() + "P"
-
-    def __str__(self):
-        return str(self.color).capitalize() + " Pawn, " + str(self.position)
-
-    def __repr__(self):
-        return "chess.Pawn(color=" + repr(self.color) + ", position=" + repr(self.position) + ")"
 
     def _can_double_move(self):
         return (self.color, self.row) in [(Color.white, 1), (Color.black, 6)]
