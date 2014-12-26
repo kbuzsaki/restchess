@@ -8,6 +8,9 @@ class Color(Enum):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return "chess.Color." + str(self)
+
     @classmethod
     def from_notation(constructor, notation):
         if notation.upper() == "W":
