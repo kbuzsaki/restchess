@@ -10,18 +10,18 @@ class Color(Enum):
 
     @classmethod
     def from_notation(constructor, notation):
-        if notation.lower() == "w":
+        if notation.upper() == "W":
             return Color.white
-        elif notation.lower() == "b":
+        elif notation.upper() == "B":
             return Color.black
         else:
             raise Exception("Couldn't find color for notation: \"" + notation + "\"")
 
     def to_notation(self):
         if self is Color.white:
-            return "w"
+            return "W"
         else:
-            return "b"
+            return "B"
 
 
 
@@ -146,7 +146,7 @@ class Piece:
 
     @classmethod
     def from_notation(constructor, piece_notation):
-        if piece_notation.lower() == "p":
+        if piece_notation.upper() == "P":
             return Pawn
         else:
             raise Exception("unrecognized piece type: \"" + piece_notation + "\"")
@@ -187,7 +187,7 @@ class Pawn(Piece):
     ATTACK_OFFSETS = {Color.white: [(1, 1), (1, -1)], Color.black: [(-1, 1), (-1, -1)]}
 
     def to_notation(self):
-        return self.color.to_notation() + "p"
+        return self.color.to_notation() + "P"
 
     def __str__(self):
         return str(self.color).capitalize() + " Pawn, " + str(self.position)
