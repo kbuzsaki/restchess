@@ -117,6 +117,11 @@ class Board:
     def __getitem__(self, row):
         return self.rows[row]
 
+    def positions(self):
+        for row in range(8):
+            for col in range(8):
+                yield Position(row, col)
+
     def squares(self):
         for row in self.rows:
             yield from row
