@@ -10,11 +10,6 @@ class PawnTest(unittest.TestCase):
         self.wpawn = self.board.add(Color.white, Pawn, Position(1,4))
         self.bpawn = self.board.add(Color.black, Pawn, Position(2,3))
 
-    def test_position(self):
-        for piece in (self.wpawn, self.bpawn):
-            self.assertEqual(piece.position.row, piece.row)
-            self.assertEqual(piece.position.col, piece.col)
-
     def test_possible_moves(self):
         self.assertListEqual(self.wpawn.possible_moves, [Position(2, 4), Position(3, 4)])
         self.assertListEqual(self.bpawn.possible_moves, [Position(1, 3)])
