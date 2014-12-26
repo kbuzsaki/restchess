@@ -117,14 +117,12 @@ class Board:
     def __getitem__(self, row):
         return self.rows[row]
 
-    def __contains__(self, position):
-        row, col = position
-        return 0 <= row < 8 and 0 <= col < 8
-
-    def __iter__(self):
-        """iterates over all of the quares in the board """
+    def squares(self):
         for row in self.rows:
             yield from row
+
+    def pieces(self):
+        return (square for square in self.squares() if square)
 
     def add(self, color, piece_type, position):
         piece = piece_type(color, position, self)
@@ -172,13 +170,13 @@ class Piece:
 
     def _stop_filter(self, positions):
         for position in positions:
-            if position in self.board and self.board.empty(position):
+            if position.in_bounds and self.board.empty(position):
                 yield position
             else:
                 return
 
     def _enemy_filter(self, positions):
-        return [position for position in positions if self._enemy_at(position)] 
+        return (position for position in positions if self._enemy_at(position))
 
                           
 class Pawn(Piece):
