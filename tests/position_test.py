@@ -55,5 +55,12 @@ class PositionTest(unittest.TestCase):
     def test_pass(self):
         pass
 
+    def test_in_bounds(self):
+        self.assertTrue(all(position.in_bounds for position in self.flat_positions))
+        self.assertFalse(any(Position(-1, col).in_bounds for col in range(-1, 9)))
+        self.assertFalse(any(Position(8, col).in_bounds for col in range(-1, 9)))
+        self.assertFalse(any(Position(row, -1).in_bounds for row in range(-1, 9)))
+        self.assertFalse(any(Position(row, 8).in_bounds for row in range(-1, 9)))
+
 if __name__ == '__main__':
     unittest.main()

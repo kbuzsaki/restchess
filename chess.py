@@ -65,6 +65,10 @@ class Position:
         row, col = other
         return (self.row - row, self.col - col)
 
+    @property
+    def in_bounds(self):
+        return 0 <= self.row < 8 and 0 <= self.col < 8
+
 
 class Board:
 
