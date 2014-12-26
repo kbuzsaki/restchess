@@ -62,5 +62,72 @@ class PositionTest(unittest.TestCase):
         self.assertFalse(any(Position(row, -1).in_bounds for row in range(-1, 9)))
         self.assertFalse(any(Position(row, 8).in_bounds for row in range(-1, 9)))
 
+    def assertPairwiseOffset(self, positions, offset):
+        """asserts that every two adjacent elements in the list has a uniform offset """
+        def pairwise(iterable):
+            """s -> (s0,s1), (s1,s2), (s2, s3), ... """
+            iter_a, iter_b = itertools.tee(iterable)
+            next(iter_b, None)
+            return zip(iter_a, iter_b)
+
+        for prev_position, position in pairwise(positions):
+            self.assertEqual(offset, position - prev_position)
+
+    def test_iterator_up(self):
+        for position in self.flat_positions:
+            up_positions = list(position.iterator_up())
+            self.assertEqual(7 - position.row, len(up_positions))
+            self.assertTrue(all(up_position.in_bounds for up_position in up_positions))
+            self.assertPairwiseOffset([position] + up_positions, (1, 0))
+
+    def test_iterator_down(self):
+        for position in self.flat_positions:
+            down_positions = list(position.iterator_down())
+            self.assertEqual(position.row, len(down_positions))
+            self.assertTrue(all(down_position.in_bounds for down_position in down_positions))
+            self.assertPairwiseOffset([position] + down_positions, (-1, 0))
+
+    def test_iterator_right(self):
+        for position in self.flat_positions:
+            right_positions = list(position.iterator_right())
+            self.assertEqual(7 - position.col, len(right_positions))
+            self.assertTrue(all(right_position.in_bounds for right_position in right_positions))
+            self.assertPairwiseOffset([position] + right_positions, (0, 1))
+
+    def test_iterator_left(self):
+        for position in self.flat_positions:
+            left_positions = list(position.iterator_left())
+            self.assertEqual(position.col, len(left_positions))
+            self.assertTrue(all(left_position.in_bounds for left_position in left_positions))
+            self.assertPairwiseOffset([position] + left_positions, (0, -1))
+
+    def test_iterator_upright(self):
+        for position in self.flat_positions:
+            upright_positions = list(position.iterator_upright())
+            self.assertEqual(min(7 - position.row, 7 - position.col), len(upright_positions))
+            self.assertTrue(all(upright_position.in_bounds for upright_position in upright_positions))
+            self.assertPairwiseOffset([position] + upright_positions, (1, 1))
+
+    def test_iterator_upleft(self):
+        for position in self.flat_positions:
+            upleft_positions = list(position.iterator_upleft())
+            self.assertEqual(min(7 - position.row, position.col), len(upleft_positions))
+            self.assertTrue(all(upleft_position.in_bounds for upleft_position in upleft_positions))
+            self.assertPairwiseOffset([position] + upleft_positions, (1, -1))
+
+    def test_iterator_downright(self):
+        for position in self.flat_positions:
+            downright_positions = list(position.iterator_downright())
+            self.assertEqual(min(position.row, 7 - position.col), len(downright_positions))
+            self.assertTrue(all(downright_position.in_bounds for downright_position in downright_positions))
+            self.assertPairwiseOffset([position] + downright_positions, (-1, 1))
+
+    def test_iterator_downleft(self):
+        for position in self.flat_positions:
+            downleft_positions = list(position.iterator_downleft())
+            self.assertEqual(min(position.row, position.col), len(downleft_positions))
+            self.assertTrue(all(downleft_position.in_bounds for downleft_position in downleft_positions))
+            self.assertPairwiseOffset([position] + downleft_positions, (-1, -1))
+
 if __name__ == '__main__':
     unittest.main()

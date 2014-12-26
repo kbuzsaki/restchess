@@ -69,6 +69,30 @@ class Position:
     def in_bounds(self):
         return 0 <= self.row < 8 and 0 <= self.col < 8
 
+    def iterator_up(self):
+        return (Position(row, self.col) for row in range(self.row + 1, 8))
+
+    def iterator_down(self):
+        return (Position(row, self.col) for row in range(self.row - 1, -1, -1))
+
+    def iterator_right(self):
+        return (Position(self.row, col) for col in range(self.col + 1, 8))
+
+    def iterator_left(self):
+        return (Position(self.row, col) for col in range(self.col - 1, -1, -1))
+
+    def iterator_upright(self):
+        return (Position(row, col) for row, col in zip(range(self.row + 1, 8), range(self.col + 1, 8)))
+
+    def iterator_upleft(self):
+        return (Position(row, col) for row, col in zip(range(self.row + 1, 8), range(self.col - 1, -1, -1)))
+
+    def iterator_downright(self):
+        return (Position(row, col) for row, col in zip(range(self.row - 1, -1, -1), range(self.col + 1, 8)))
+
+    def iterator_downleft(self):
+        return (Position(row, col) for row, col in zip(range(self.row - 1, -1, -1), range(self.col - 1, -1, -1)))
+
 
 class Board:
 
