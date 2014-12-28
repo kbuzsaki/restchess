@@ -42,3 +42,31 @@ def pretty(resp):
     print("     " + "     ".join("ABCDEFGH"))
 
 
+class MockGameConnection:
+
+    def __init__(self):
+        self._board = Board.from_notation(chess.STARTING_NOTATION)
+        self.turn_count = 1
+        self.cur_player = Color.white
+
+    def _next_turn(self):
+        if self.cur_player == Color.white:
+            self.cur_player = Color.black
+        else:
+            self.turn_count += 1
+            self.cur_player = Color.white
+
+    def board(self):
+        return self._board
+
+    def turn(self):
+        return {"turn": self.turn_count, "current_player": self.cur_player}
+
+    def print_board(self):
+        pretty({"board": self._board.to_notation(), "current_player": str(self.cur_player)})
+
+    def move(self, begin, end):
+        begin_position = Position.from_notation(str(begin))
+        end_position = Position.from_notation(str(end))
+        self._board.at(begin_position).move_to(end_position)
+
