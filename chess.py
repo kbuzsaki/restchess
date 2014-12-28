@@ -178,6 +178,16 @@ class Piece:
     def col(self):
         return self.position.col
 
+    def move_to(self, position):
+        if self.board.empty(position) and not self.valid_move(position):
+            raise Exception("cannot move there!")
+        if not self.board.empty(position) and not self.valid_attack(position):
+            raise Exception("cannot attack there!")
+
+        self.board[self.row][self.col] = None
+        self.board[position.row][position.col] = self
+        self.position = position
+
     def valid_move(self, position):
         return position in self.possible_moves
 
