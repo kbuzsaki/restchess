@@ -1,6 +1,14 @@
 from enum import Enum, unique
 import itertools
 
+STARTING_NOTATION = [["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],
+                     ["WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"], 
+                     [  "",   "",   "",   "",   "",   "",   "",   ""],
+                     [  "",   "",   "",   "",   "",   "",   "",   ""],
+                     [  "",   "",   "",   "",   "",   "",   "",   ""],
+                     [  "",   "",   "",   "",   "",   "",   "",   ""],
+                     ["BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"], 
+                     ["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"]]
 @unique
 class Color(Enum):
     white = 1

@@ -17,14 +17,7 @@ class Game:
 
 
 game = Game()
-game.board = Board.from_notation([["WR", "WN", "WB", "WQ", "WK", "WB", "WN", "WR"],
-                                  ["WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"], 
-                                  [  "",   "",   "",   "",   "",   "",   "",   ""],
-                                  [  "",   "",   "",   "",   "",   "",   "",   ""],
-                                  [  "",   "",   "",   "",   "",   "",   "",   ""],
-                                  [  "",   "",   "",   "",   "",   "",   "",   ""],
-                                  ["BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"], 
-                                  ["BR", "BN", "BB", "BQ", "BK", "BB", "BN", "BR"]])
+game.board = Board.from_notation(STARTING_NOTATION)
 
 app = Flask(__name__)
 
