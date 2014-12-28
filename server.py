@@ -30,6 +30,11 @@ def display_board(extras=dict()):
     display = {"turn": game.turn, "current_player": str(game.cur_player), "board": game.board.to_notation()}
     display.update(extras)
     return json.dumps(display)
+
+@app.route('/turn')
+def current_turn():
+    display = {"turn": game.turn, "current_player": str(game.cur_player)}
+    return json.dumps(display)
     
 @app.route('/move')
 def next_move():
