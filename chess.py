@@ -1,4 +1,5 @@
 from enum import Enum, unique
+import itertools
 
 @unique
 class Color(Enum):
@@ -156,7 +157,7 @@ class Piece:
     def from_notation(constructor, piece_notation, *, TYPES_BY_NOTATION=None):
         # need to be lazy here to resolve circularity between Piece and other piece classes
         if not TYPES_BY_NOTATION:
-            PIECE_TYPES = [Pawn]
+            PIECE_TYPES = [Pawn, Rook]
             TYPES_BY_NOTATION = {piece_type.NOTATION: piece_type for piece_type in PIECE_TYPES}
         return TYPES_BY_NOTATION[piece_notation.upper()]
 
@@ -225,6 +226,22 @@ class Pawn(Piece):
         return list(self._enemy_filter(attacks))
 
 
+class Rook(Piece):
 
+    NAME = "Rook"
+    NOTATION = "R"
+
+    @property
+    def _move_iterators(self):
+        return [self.position.iterator_up(),    self.position.iterator_down(),
+                self.position.iterator_right(), self.position.iterator_left()]
+
+    @property
+    def possible_moves(self):
+        return list(itertools.chain(*(self._stop_filter(moves) for moves in self._move_iterators)))
+
+    @property
+    def possible_attacks(self):
+        return list(self._enemy_filter(itertools.chain(*self._move_iterators)))
 
 

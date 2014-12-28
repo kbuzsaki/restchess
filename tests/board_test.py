@@ -6,14 +6,14 @@ from chess import Board, Color, Position, Piece, Pawn
 class BoardTest(unittest.TestCase):
 
     def setUp(self):
-        self.notation = [[  "",   "",   "",   "",   "",   "",   "",   ""],
+        self.notation = [["WR",   "",   "",   "",   "",   "",   "", "WR"],
                          ["WP", "WP", "WP", "WP",   "", "WP", "WP", "WP"], 
                          [  "",   "",   "",   "",   "",   "",   "",   ""],
                          [  "",   "",   "",   "", "WP",   "",   "",   ""],
                          [  "",   "",   "",   "", "BP",   "",   "",   ""],
                          [  "",   "",   "",   "",   "",   "",   "",   ""],
                          ["BP", "BP", "BP", "BP",   "", "BP", "BP", "BP"], 
-                         [  "",   "",   "",   "",   "",   "",   "",   ""]]
+                         ["BR",   "",   "",   "",   "",   "",   "", "BR"]]
         self.flat_notation = list(itertools.chain(*self.notation))
         self.num_pieces = len([square for square in self.flat_notation if square != ""])
         self.empty_board = Board()
