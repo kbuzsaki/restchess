@@ -157,7 +157,7 @@ class Piece:
     def from_notation(constructor, piece_notation, *, TYPES_BY_NOTATION=None):
         # need to be lazy here to resolve circularity between Piece and other piece classes
         if not TYPES_BY_NOTATION:
-            PIECE_TYPES = [Pawn, Rook]
+            PIECE_TYPES = [King, Queen, Rook, Knight, Bishop, Pawn]
             TYPES_BY_NOTATION = {piece_type.NOTATION: piece_type for piece_type in PIECE_TYPES}
         return TYPES_BY_NOTATION[piece_notation.upper()]
 
@@ -187,10 +187,14 @@ class Piece:
     def _enemy_at(self, position):
         return not self.board.empty(position) and self.color != self.board.at(position).color
 
-    def _stop_filter(self, positions):
+    def _stop_filter(self, positions, inclusive=False):
+        done = not inclusive
         for position in positions:
             if position.in_bounds and self.board.empty(position):
                 yield position
+            elif not done:
+                yield position
+                done = True
             else:
                 return
 
@@ -242,6 +246,91 @@ class Rook(Piece):
 
     @property
     def possible_attacks(self):
-        return list(self._enemy_filter(itertools.chain(*self._move_iterators)))
+        in_range = itertools.chain(*(self._stop_filter(moves, inclusive=True) for moves in self._move_iterators))
+        return list(self._enemy_filter(in_range))
+
+
+class Bishop(Piece):
+
+    NAME = "Bishop"
+    NOTATION = "B"
+
+    @property
+    def _move_iterators(self):
+        return [self.position.iterator_upright(),   self.position.iterator_upleft(),
+                self.position.iterator_downright(), self.position.iterator_downleft()]
+
+    @property
+    def possible_moves(self):
+        return list(itertools.chain(*(self._stop_filter(moves) for moves in self._move_iterators)))
+
+    @property
+    def possible_attacks(self):
+        in_range = itertools.chain(*(self._stop_filter(moves, inclusive=True) for moves in self._move_iterators))
+        return list(self._enemy_filter(in_range))
+
+
+class Queen(Piece):
+
+    NAME = "Queen"
+    NOTATION = "Q"
+
+    @property
+    def _move_iterators(self):
+        return [self.position.iterator_up(),        self.position.iterator_down(),
+                self.position.iterator_right(),     self.position.iterator_left(),
+                self.position.iterator_upright(),   self.position.iterator_upleft(),
+                self.position.iterator_downright(), self.position.iterator_downleft()]
+
+    @property
+    def possible_moves(self):
+        return list(itertools.chain(*(self._stop_filter(moves) for moves in self._move_iterators)))
+
+    @property
+    def possible_attacks(self):
+        in_range = itertools.chain(*(self._stop_filter(moves, inclusive=True) for moves in self._move_iterators))
+        return list(self._enemy_filter(in_range))
+
+
+class King(Piece):
+
+    NAME = "King"
+    NOTATION = "K"
+
+    MOVE_OFFSETS = [(1, 1), (1, 0), (1, -1), (0, 1), (0, -1), (-1, 1), (-1, 0), (-1, -1)]
+
+    @property
+    def _moves(self):
+        positions = [self.position + offset for offset in King.MOVE_OFFSETS]
+        return [position for position in positions if position.in_bounds]
+
+    @property
+    def possible_moves(self):
+        return [position for position in self._moves if self.board.empty(position)]
+
+    @property
+    def possible_attacks(self):
+        return list(self._enemy_filter(self._moves))
+
+
+class Knight(Piece):
+
+    NAME = "Knight"
+    NOTATION = "N"
+
+    MOVE_OFFSETS = [(2, 1), (2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2), (-2, 1), (-2, -1)]
+
+    @property
+    def _moves(self):
+        positions = [self.position + offset for offset in Knight.MOVE_OFFSETS]
+        return [position for position in positions if position.in_bounds]
+
+    @property
+    def possible_moves(self):
+        return [position for position in self._moves if self.board.empty(position)]
+
+    @property
+    def possible_attacks(self):
+        return list(self._enemy_filter(self._moves))
 
 
