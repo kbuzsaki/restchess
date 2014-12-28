@@ -3,6 +3,25 @@ from enum import Enum, unique
 import chess
 from chess import Position
 
+PIECE_IMAGES = {
+            "WK": "icons/white_king.gif",
+            "WQ": "icons/white_queen.gif",
+            "WR": "icons/white_rook.gif",
+            "WN": "icons/white_knight.gif",
+            "WB": "icons/white_bishop.gif",
+            "WP": "icons/white_pawn.gif",
+            "BK": "icons/black_king.gif",
+            "BQ": "icons/black_queen.gif",
+            "BR": "icons/black_rook.gif",
+            "BN": "icons/black_knight.gif",
+            "BB": "icons/black_bishop.gif",
+            "BP": "icons/black_pawn.gif"
+        }
+
+EMPTY_IMAGE = "icons/empty.gif"
+LIGHT_MOVABLE_IMAGE = "icons/light_blue.gif"
+DARK_MOVABLE_IMAGE = "icons/dark_blue.gif"
+
 class Window(Frame):
   
     def __init__(self, parent):
@@ -74,21 +93,17 @@ class SquareButton(Label):
         self["highlightthickness"] = 1
         self.bind("<Button-1>", self.on_click)
         self.grid(sticky=N+S+E+W, row=row, column=col)
-        self.blob = None
         self.reset()
 
-    def update_text(self):
+    def update_icon(self):
         square = self.board[self.row][self.col]
-        self["text"] = square.to_notation() if square else "  "
+        image_name = PIECE_IMAGES[square.to_notation()] if square else EMPTY_IMAGE
+        self.set_image(image_name)
 
     def reset(self):
         self.state = State.blank
-        self["fg"] = "black"
-        self["font"] = "-weight normal"
         self["bg"] = "cornsilk3" if self.is_dark else "linen"
-        self.update_text()
-        if self.blob:
-            self.blob.destroy()
+        self.update_icon()
 
     @property
     def is_dark(self):
@@ -118,10 +133,9 @@ class SquareButton(Label):
     def empty(self):
         return self.board.empty(self.position)
 
-    def set_blob(self, color):
-        self["text"] = "@"
-        self["font"] = "-weight bold"
-        self["fg"] = color
+    def set_image(self, image_filename):
+        self.image = PhotoImage(file=image_filename)
+        self["image"] = self.image
 
     def set_selected(self):
         self.state = State.selected
@@ -129,7 +143,7 @@ class SquareButton(Label):
 
     def set_movable(self):
         self.state = State.movable
-        self.set_blob("dark turquoise" if self.is_dark else "turquoise")
+        self.set_image(DARK_MOVABLE_IMAGE if self.is_dark else LIGHT_MOVABLE_IMAGE)
 
     def set_attackable(self):
         self.state = State.attackable
@@ -147,7 +161,7 @@ class SquareButton(Label):
         
 if __name__ == '__main__':
     root = Tk()
-    root.geometry("420x360+800+300")
+    root.geometry("540x480+700+300")
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
 
