@@ -34,26 +34,31 @@ class GameWindow(Frame):
         self.root = root
         self.root.title("Chess!")
 
+        # initialize current turn label
+        self.turn_label = Label(self, text="Loading...")
+        self.turn_label.grid(sticky=N+S+E+W, row=0, columnspan=8)
+
         # initialize buttons container
         self.grid(sticky=N+S+E+W)
+        for index in range(9):
+            self.rowconfigure(index, weight=1, minsize=60)
         for index in range(8):
-            self.rowconfigure(index, weight=1)
-            self.columnconfigure(index, weight=1)
+            self.columnconfigure(index, weight=1, minsize=60)
 
         # grid of buttons corresponding to board squares
         self.buttons = [[None] * 8 for x in range(8)]
         self.selected = None
 
         self.conn = conn
-        self.last_turn = conn.turn()
+        self.current_turn = conn.turn()
         self.reload_board()
         # registers the refresh call
         self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
 
     def reload_clock(self):
         current_turn = conn.turn()
-        if self.last_turn != current_turn:
-            self.last_turn = current_turn
+        if self.current_turn != current_turn:
+            self.current_turn = current_turn
             self.conn.refresh()
             self.reset_all()
         # registers the refresh call again, forming a clock
@@ -64,12 +69,20 @@ class GameWindow(Frame):
         return conn.board()
 
     def reload_board(self):
+        self.refresh_label()
         for row_num, row in enumerate(self.board.rows):
             for col_num, square in enumerate(row):
                 button = SquareButton(self, self.buttons, row_num, col_num)
+                button.grid(sticky=N+S+E+W, row=row_num + 1, column=col_num)
                 self.buttons[row_num][col_num] = button
 
+    def refresh_label(self):
+        message = "Turn: " + str(self.current_turn["turn"]) 
+        message += " Player: " + str(self.current_turn["current_player"]).capitalize()
+        self.turn_label["text"] = message
+
     def reset_all(self):
+        self.refresh_label()
         self.selected = None
         for button_row in self.buttons:
             for button in button_row:
@@ -112,7 +125,6 @@ class SquareButton(Label):
         self["highlightbackground"] = "black"
         self["highlightthickness"] = 1
         self.bind("<Button-1>", self.on_click)
-        self.grid(sticky=N+S+E+W, row=row, column=col)
         self.reset()
 
     def update_icon(self):
@@ -187,7 +199,7 @@ class SquareButton(Label):
         
 if __name__ == '__main__':
     root = Tk()
-    root.geometry("540x480+700+300")
+    root.geometry("+700+200")
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
 
