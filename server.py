@@ -59,4 +59,7 @@ def next_move():
     return display_board()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # host="0.0.0.0" here is how we make the server public
+    # see: http://flask.pocoo.org/docs/0.10/quickstart/#public-server
+    app.run(debug=True, host="0.0.0.0")
+
