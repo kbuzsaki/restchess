@@ -9,6 +9,7 @@ class GameConnection:
 
     def __init__(self, base_url):
         self.base_url = base_url
+        self.invalidated = True
 
     def _get(self, path, **kwargs):
         url = self.base_url + path
@@ -20,8 +21,17 @@ class GameConnection:
         resp = json.loads(urlopen(url).read().decode('utf8'))
         return resp
 
+    def _validate(self):
+        if self.invalidated:
+            self._cached_board = Board.from_notation(self._get("/board")["board"])
+            self.invalidated = False
+
+    def refresh(self):
+        self.invalidated = True
+
     def board(self):
-        return Board.from_notation(self._get("/board")["board"])
+        self._validate()
+        return self._cached_board
 
     def turn(self):
         return self._get("/turn")
@@ -31,6 +41,7 @@ class GameConnection:
 
     def move(self, begin, end):
         self._get("/move", begin=begin, end=end)
+        self.refresh()
 
 def pretty(resp):
     board = resp["board"]
@@ -55,6 +66,10 @@ class MockGameConnection:
         else:
             self.turn_count += 1
             self.cur_player = Color.white
+
+    def refresh(self):
+        # no op because it's all local
+        pass
 
     def board(self):
         return self._board
