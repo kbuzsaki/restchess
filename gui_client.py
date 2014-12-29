@@ -45,13 +45,17 @@ class GameWindow(Frame):
         self.selected = None
 
         self.conn = conn
+        self.last_turn = conn.turn()
         self.reload_board()
         # registers the refresh call
         self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
 
     def reload_clock(self):
-        self.conn.refresh()
-        self.reset_all()
+        current_turn = conn.turn()
+        if self.last_turn != current_turn:
+            self.last_turn = current_turn
+            self.conn.refresh()
+            self.reset_all()
         # registers the refresh call again, forming a clock
         self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
 
