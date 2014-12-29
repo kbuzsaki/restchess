@@ -1,7 +1,10 @@
 from tkinter import *
 from enum import Enum, unique
+import sys
 import chess
 from chess import Position
+import client
+from client import GameConnection, MockGameConnection
 
 PIECE_IMAGES = {
             "WK": "icons/white_king.gif",
@@ -22,12 +25,14 @@ EMPTY_IMAGE = "icons/empty.gif"
 LIGHT_MOVABLE_IMAGE = "icons/light_blue.gif"
 DARK_MOVABLE_IMAGE = "icons/dark_blue.gif"
 
+REFRESH_RATE_MILLS = 5000
+
 class GameWindow(Frame):
   
-    def __init__(self, parent):
-        Frame.__init__(self, parent, background="white")   
-        self.parent = parent
-        self.parent.title("Chess!")
+    def __init__(self, root, conn):
+        Frame.__init__(self, root, background="white")   
+        self.root = root
+        self.root.title("Chess!")
 
         # initialize buttons container
         self.grid(sticky=N+S+E+W)
@@ -39,13 +44,25 @@ class GameWindow(Frame):
         self.buttons = [[None] * 8 for x in range(8)]
         self.selected = None
 
-        self.board = chess.Board.from_notation(chess.STARTING_NOTATION)
+        self.conn = conn
         self.reload_board()
+        # registers the refresh call
+        self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
+
+    def reload_clock(self):
+        self.conn.refresh()
+        self.reset_all()
+        # registers the refresh call again, forming a clock
+        self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
+
+    @property
+    def board(self):
+        return conn.board()
 
     def reload_board(self):
         for row_num, row in enumerate(self.board.rows):
             for col_num, square in enumerate(row):
-                button = SquareButton(self, self.buttons, self.board, row_num, col_num)
+                button = SquareButton(self, self.buttons, row_num, col_num)
                 self.buttons[row_num][col_num] = button
 
     def reset_all(self):
@@ -67,7 +84,7 @@ class GameWindow(Frame):
                 for position in button.piece.possible_attacks:
                     self.buttons[position.row][position.col].set_attackable()
         if button.movable or button.attackable:
-            self.selected.piece.move_to(button.position)
+            self.conn.move(self.selected.position, button.position)
             self.reset_all()
 
 
@@ -80,11 +97,10 @@ class State(Enum):
 
 class SquareButton(Label):
 
-    def __init__(self, game_window, buttons, board, row, col):
+    def __init__(self, game_window, buttons, row, col):
         Label.__init__(self, game_window)
         self.game_window = game_window
         self.buttons = buttons
-        self.board = board
         self.row = row
         self.col = col
         self.state = State.blank
@@ -104,6 +120,10 @@ class SquareButton(Label):
         self.state = State.blank
         self["bg"] = "cornsilk3" if self.is_dark else "linen"
         self.update_icon()
+
+    @property
+    def board(self):
+        return self.game_window.board
 
     @property
     def is_dark(self):
@@ -165,6 +185,12 @@ if __name__ == '__main__':
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
 
-    app = GameWindow(root)
+    if len(sys.argv) > 1:
+        url = sys.argv[1]
+        conn = GameConnection(url)
+    else:
+        conn = MockGameConnection()
+
+    app = GameWindow(root, conn)
 
     root.mainloop()  
