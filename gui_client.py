@@ -22,7 +22,7 @@ EMPTY_IMAGE = "icons/empty.gif"
 LIGHT_MOVABLE_IMAGE = "icons/light_blue.gif"
 DARK_MOVABLE_IMAGE = "icons/dark_blue.gif"
 
-class Window(Frame):
+class GameWindow(Frame):
   
     def __init__(self, parent):
         Frame.__init__(self, parent, background="white")   
@@ -80,9 +80,9 @@ class State(Enum):
 
 class SquareButton(Label):
 
-    def __init__(self, window, buttons, board, row, col):
-        Label.__init__(self, window)
-        self.window = window
+    def __init__(self, game_window, buttons, board, row, col):
+        Label.__init__(self, game_window)
+        self.game_window = game_window
         self.buttons = buttons
         self.board = board
         self.row = row
@@ -156,7 +156,7 @@ class SquareButton(Label):
             self.set_selected()
 
     def on_click(self, event):
-        self.window.on_click(self)
+        self.game_window.on_click(self)
 
         
 if __name__ == '__main__':
@@ -165,6 +165,6 @@ if __name__ == '__main__':
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
 
-    app = Window(root)
+    app = GameWindow(root)
 
     root.mainloop()  
