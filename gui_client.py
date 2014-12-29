@@ -157,8 +157,10 @@ class SquareButton(Label):
     def empty(self):
         return self.board.empty(self.position)
 
-    def set_image(self, image_filename):
-        self.image = PhotoImage(file=image_filename)
+    def set_image(self, image_filename, *, image_cache=dict()):
+        if image_filename not in image_cache:
+            image_cache[image_filename] = PhotoImage(file=image_filename)
+        self.image = image_cache[image_filename]
         self["image"] = self.image
 
     def set_selected(self):
