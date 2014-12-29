@@ -10,6 +10,9 @@ class GameConnection:
     def __init__(self, base_url):
         self.base_url = base_url
         self.invalidated = True
+        print("initializing connection to: " + base_url)
+        self._validate() # does the first load
+        print("initialized connection to: " + base_url)
 
     def _get(self, path, **kwargs):
         url = self.base_url + path
@@ -59,6 +62,7 @@ class MockGameConnection:
         self._board = Board.from_notation(chess.STARTING_NOTATION)
         self.turn_count = 1
         self.cur_player = Color.white
+        print("initialized mock connection")
 
     def _next_turn(self):
         if self.cur_player == Color.white:
