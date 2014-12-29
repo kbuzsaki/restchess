@@ -101,7 +101,7 @@ class GameWindow(Frame):
                 for position in button.piece.possible_attacks:
                     self.buttons[position.row][position.col].set_attackable()
         if button.movable or button.attackable:
-            self.conn.move(self.selected.position, button.position)
+            self.current_turn = self.conn.move(self.selected.position, button.position)
             self.reset_all()
 
 

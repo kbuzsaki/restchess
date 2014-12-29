@@ -43,8 +43,11 @@ class GameConnection:
         pretty(self._get("/board"))
 
     def move(self, begin, end):
-        self._get("/move", begin=begin, end=end)
-        self.refresh()
+        resp = self._get("/move", begin=begin, end=end)
+        # take advantage of the move response to refresh the board
+        next_turn = {"turn": resp["turn"], "current_player": resp["current_player"]}
+        self._cached_board = Board.from_notation(resp["board"])
+        return next_turn
 
 def pretty(resp):
     board = resp["board"]
@@ -88,4 +91,5 @@ class MockGameConnection:
         begin_position = Position.from_notation(str(begin))
         end_position = Position.from_notation(str(end))
         self._board.at(begin_position).move_to(end_position)
+        return self.turn()
 
