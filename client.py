@@ -52,6 +52,10 @@ class GameConnection:
         # take advantage of the move response to refresh the board
         return self._load_from_response(resp)
 
+    def reset(self):
+        resp = self._get("/reset")
+        return self._load_from_response(resp)
+
 
 def pretty(resp):
     board = resp["board"]
@@ -66,10 +70,13 @@ def pretty(resp):
 class MockGameConnection:
 
     def __init__(self):
+        self._reset()
+        print("initialized mock connection")
+
+    def _reset(self):
         self._board = Board.from_notation(chess.STARTING_NOTATION)
         self.turn_count = 1
         self.cur_player = Color.white
-        print("initialized mock connection")
 
     def _next_turn(self):
         if self.cur_player == Color.white:
@@ -95,5 +102,9 @@ class MockGameConnection:
         begin_position = Position.from_notation(str(begin))
         end_position = Position.from_notation(str(end))
         self._board.at(begin_position).move_to(end_position)
+        return self.turn()
+
+    def reset(self):
+        self._reset()
         return self.turn()
 

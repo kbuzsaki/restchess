@@ -5,6 +5,10 @@ from chess import *
 class Game:
 
     def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.board = Board.from_notation(STARTING_NOTATION)
         self.turn = 1
         self.cur_player = Color.white
 
@@ -17,7 +21,6 @@ class Game:
 
 
 game = Game()
-game.board = Board.from_notation(STARTING_NOTATION)
 
 app = Flask(__name__)
 
@@ -57,6 +60,12 @@ def next_move():
     game.next_turn()
 
     return display_board()
+
+@app.route('/reset')
+def reset_game():
+    game.reset()
+    return display_board()
+
 
 if __name__ == "__main__":
     # host="0.0.0.0" here is how we make the server public
