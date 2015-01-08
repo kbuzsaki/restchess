@@ -32,6 +32,10 @@ class GameWindow(Frame):
     def __init__(self, root, conn):
         Frame.__init__(self, root, background="white")   
         self.root = root
+        self.init_ui()
+        self.load_conn(conn)
+
+    def init_ui(self):
         self.root.title("Chess!")
 
         # initialize current turn label
@@ -49,17 +53,19 @@ class GameWindow(Frame):
         self.buttons = [[None] * 8 for x in range(8)]
         self.selected = None
 
-        self.conn = conn
-        self.current_turn = conn.turn()
-        self.reload_board()
         # registers the refresh call
         self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
+
+    def load_conn(self, conn):
+        self._conn = conn
+        self.current_turn = conn.turn()
+        self.reload_board()
 
     def reload_clock(self):
         current_turn = conn.turn()
         if self.current_turn != current_turn:
             self.current_turn = current_turn
-            self.conn.refresh()
+            self._conn.refresh()
             self.reset_all()
         # registers the refresh call again, forming a clock
         self.root.after(REFRESH_RATE_MILLS, self.reload_clock)
@@ -101,7 +107,7 @@ class GameWindow(Frame):
                 for position in button.piece.possible_attacks:
                     self.buttons[position.row][position.col].set_attackable()
         if button.movable or button.attackable:
-            self.current_turn = self.conn.move(self.selected.position, button.position)
+            self.current_turn = self._conn.move(self.selected.position, button.position)
             self.reset_all()
 
 
