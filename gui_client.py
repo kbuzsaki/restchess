@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter.simpledialog as dialogs
 from enum import Enum, unique
 import sys
 import chess
@@ -38,6 +39,14 @@ class GameWindow(Frame):
     def init_ui(self):
         self.root.title("Chess!")
 
+        toolbar = Menu(self.root)
+        self.root.config(menu=toolbar)
+
+        file_menu = Menu(toolbar)
+        file_menu.add_command(label="New Local Game", command=self.new_local_game)
+        file_menu.add_command(label="New Connection", command=self.new_network_game)
+        toolbar.add_cascade(label="File", menu=file_menu)
+
         # initialize current turn label
         self.turn_label = Label(self, text="Loading...")
         self.turn_label.grid(sticky=N+S+E+W, row=0, columnspan=8)
@@ -60,6 +69,15 @@ class GameWindow(Frame):
         self._conn = conn
         self.current_turn = conn.turn()
         self.reload_board()
+
+    def new_local_game(self):
+        self.load_conn(MockGameConnection())
+
+    def new_network_game(self):
+        url = dialogs.askstring("New Connection", "Enter the url")
+        if not url.startswith("http://"):
+            url = "http://" + url
+        self.load_conn(GameConnection(url))
 
     def reload_clock(self):
         current_turn = self._conn.turn()
