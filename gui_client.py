@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter.simpledialog as dialogs
+import tkinter.messagebox as messages
 from enum import Enum, unique
 import sys
 import chess
@@ -44,7 +45,7 @@ class GameWindow(Frame):
 
         file_menu = Menu(toolbar)
         file_menu.add_command(label="New Local Game", command=self.new_local_game)
-        file_menu.add_command(label="New Connection", command=self.new_network_game)
+        file_menu.add_command(label="New Network Game", command=self.new_network_game)
         toolbar.add_cascade(label="File", menu=file_menu)
 
         # initialize current turn label
@@ -77,7 +78,11 @@ class GameWindow(Frame):
         url = dialogs.askstring("New Connection", "Enter the url")
         if not url.startswith("http://"):
             url = "http://" + url
-        self.load_conn(GameConnection(url))
+        try:
+            new_conn = GameConnection(url)
+            self.load_conn(new_conn)
+        except:
+            messages.showerror("Connection Failure", "Could not load url: " + url)
 
     def reload_clock(self):
         current_turn = self._conn.turn()
