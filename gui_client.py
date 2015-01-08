@@ -48,6 +48,10 @@ class GameWindow(Frame):
         file_menu.add_command(label="New Network Game", command=self.new_network_game)
         toolbar.add_cascade(label="File", menu=file_menu)
 
+        game_menu = Menu(toolbar)
+        game_menu.add_command(label="Reset Game", command=self.reset_game)
+        toolbar.add_cascade(label="Game", menu=game_menu)
+
         # initialize current turn label
         self.turn_label = Label(self, text="Loading...")
         self.turn_label.grid(sticky=N+S+E+W, row=0, columnspan=8)
@@ -83,6 +87,10 @@ class GameWindow(Frame):
             self.load_conn(new_conn)
         except:
             messages.showerror("Connection Failure", "Could not load url: " + url)
+
+    def reset_game(self):
+        self._conn.reset()
+        self.reload_board()
 
     def reload_clock(self):
         current_turn = self._conn.turn()
