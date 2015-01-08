@@ -50,6 +50,28 @@ class BoardTest(unittest.TestCase):
             self.assertEqual(piece.position.row, piece.row)
             self.assertEqual(piece.position.col, piece.col)
 
+    def test_white_pieces(self):
+        white_pieces = set(self.board.white_pieces())
+        self.assertEqual(16, len(white_pieces))
+
+        for piece in white_pieces:
+            self.assertTrue(piece.is_white)
+
+        for piece in self.board.pieces():
+            if piece.is_white:
+                self.assertIn(piece, white_pieces)
+
+    def test_black_pieces(self):
+        black_pieces = set(self.board.black_pieces())
+        self.assertEqual(16, len(black_pieces))
+
+        for piece in black_pieces:
+            self.assertTrue(piece.is_black)
+
+        for piece in self.board.pieces():
+            if piece.is_black:
+                self.assertIn(piece, black_pieces)
+
     def test_add(self):
         board = Board()
         self.assertTrue(all(square == None for square in board.squares()))

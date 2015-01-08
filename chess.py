@@ -141,6 +141,12 @@ class Board:
     def pieces(self):
         return (square for square in self.squares() if square)
 
+    def white_pieces(self):
+        return (piece for piece in self.pieces() if piece.is_white)
+
+    def black_pieces(self):
+        return (piece for piece in self.pieces() if piece.is_black)
+
     def add(self, color, piece_type, position):
         piece = piece_type(color, position, self)
         self.rows[position.row][position.col] = piece
