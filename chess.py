@@ -186,6 +186,14 @@ class Piece:
     def col(self):
         return self.position.col
 
+    @property
+    def is_white(self):
+        return self.color == Color.white
+
+    @property
+    def is_black(self):
+        return self.color == Color.black
+
     def move_to(self, position):
         if self.board.empty(position) and not self.valid_move(position):
             raise Exception("cannot move there!")
