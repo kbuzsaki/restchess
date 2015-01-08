@@ -62,7 +62,7 @@ class GameWindow(Frame):
         self.reload_board()
 
     def reload_clock(self):
-        current_turn = conn.turn()
+        current_turn = self._conn.turn()
         if self.current_turn != current_turn:
             self.current_turn = current_turn
             self._conn.refresh()
@@ -72,7 +72,7 @@ class GameWindow(Frame):
 
     @property
     def board(self):
-        return conn.board()
+        return self._conn.board()
 
     def reload_board(self):
         self.refresh_label()
