@@ -24,9 +24,14 @@ class GameConnection:
         resp = json.loads(urlopen(url).read().decode('utf8'))
         return resp
 
+    def _load_from_response(self, resp):
+        next_turn = {"turn": resp["turn"], "current_player": resp["current_player"]}
+        self._cached_board = Board.from_notation(resp["board"])
+        return next_turn
+
     def _validate(self):
         if self.invalidated:
-            self._cached_board = Board.from_notation(self._get("/board")["board"])
+            self._load_from_response(self._get("/board"))
             self.invalidated = False
 
     def refresh(self):
@@ -45,9 +50,8 @@ class GameConnection:
     def move(self, begin, end):
         resp = self._get("/move", begin=begin, end=end)
         # take advantage of the move response to refresh the board
-        next_turn = {"turn": resp["turn"], "current_player": resp["current_player"]}
-        self._cached_board = Board.from_notation(resp["board"])
-        return next_turn
+        return self._load_from_response(resp)
+
 
 def pretty(resp):
     board = resp["board"]
